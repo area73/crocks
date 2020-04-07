@@ -150,10 +150,10 @@ import liftA2 from 'crocks/helpers/liftA2'
 const SumWriter = Writer(Sum)
 
 // slash :: Writer Number String
-const slash = SumWriter(3, 'sword')
+const slash = SumWriter(Sum(3), 'sword')
 
 // slash :: Writer Number String
-const burn = SumWriter(7, 'fireball')
+const burn = SumWriter(Sum(7), 'fireball')
 
 // doubleAttack :: NumberRec -> NumberRec -> NumberRec
 const dobuleAttack = liftA2(x => y => `You unleash a ${x} and ${y} combo`)
@@ -204,13 +204,13 @@ import List from 'crocks/List'
 const ListWriter = Writer(List)
 
 // add :: Number -> Number -> Number
-const add = x => y => ListWriter([ `adding ${y} to ${x}` ], y + x)
+const add = x => y => ListWriter(List.of(`adding ${y} to ${x}`), y + x)
 
 // multiply :: Number -> Number -> Number
-const multiply = x => y => ListWriter([ `multiplying ${y} by ${x}` ], y * x)
+const multiply = x => y => ListWriter(List.of(`multiplying ${y} by ${x}`), y * x)
 
 // pow :: Number -> Number -> Number
-const pow = x => y => ListWriter([ `${y} to the power of ${x}` ], Math.pow(y, x))
+const pow = x => y => ListWriter(List.of(`${y} to the power of ${x}`), Math.pow(y, x))
 
 // flow :: Number -> Writer List Number
 const flow = x => ListWriter.of(x)
@@ -237,7 +237,7 @@ Monoid m => Writer m b ~> () -> Pair m b
 import Min from 'crocks/Min'
 import Writer from 'crocks/Writer'
 
-Writer(Min)(100, 'value')
+Writer(Min)(Min(100), 'value')
   .read()
 //=> Pair( Min 100, "value" )
 ```
@@ -258,7 +258,7 @@ Writer(String)('meaning of life', 42)
   .log()
 //=> "meaning of life"
 
-Writer(Sum)(29, { damage: 25, buffs: 4 })
+Writer(Sum)(Sum(29), { damage: 25, buffs: 4 })
   .log()
 //=> Sum 29
 ```
@@ -290,15 +290,15 @@ const SumWriter =
 
 // appendItem :: a -> [ a ] -> SumWriter [ a ]
 const appendItem = item => xs =>
-  SumWriter(1, xs.concat([ item ]))
+  SumWriter(Sum(1), xs.concat([ item ]))
 
-SumWriter(0, [])
+SumWriter(Sum(0), [])
   .chain(appendItem('one'))
   .chain(appendItem('two'))
   .chain(appendItem('three'))
 //=> Writer( Sum 3 [ "one", "two", "three" ] )
 
-read(SumWriter(2, 'result'))
+read(SumWriter(Sum(2), 'result'))
 //=> Pair(Sum 2, 'result')
 
 fanout(Sum, x => appendItem(x)([ x ]), 1)
